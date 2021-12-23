@@ -15,6 +15,7 @@
 import maya.cmds as cmds
 import maya.OpenMayaUI as omui
 import maya.OpenMaya as om
+import maya.mel as mel
 
 from PySide2 import QtCore
 from PySide2 import QtWidgets
@@ -477,3 +478,4 @@ class controlweightvertex(QtWidgets.QDialog):
         super(controlweightvertex,self).showEvent(e)
         e.accept()
         self.switchview()
+
