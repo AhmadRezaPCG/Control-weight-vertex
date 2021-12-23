@@ -12,6 +12,6 @@ for run it see below guide:
 2_paste (from Control_weight_vertex import controlweightvertex ; controlweightvertex.show_dialog()) code onto the maya script editor and run it .
 
 
-I hope you to enjoy and use it .
+I hope you enjoy and use it .
 
 insta : ahmadrr_cg99
