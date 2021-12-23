@@ -65,6 +65,7 @@ class controlweightvertex(QtWidgets.QDialog):
         
         self.L_object    = QtWidgets.QLabel("Object : ")
         self.LE_object   = QtWidgets.QLineEdit()
+        self.LE_object              .setEnabled(False)
         self.PB_object   = QtWidgets.QPushButton(" Set ")
         
         self.F_0 = QtWidgets.QFrame()
@@ -72,10 +73,12 @@ class controlweightvertex(QtWidgets.QDialog):
         
         self.L_sourcejnt    = QtWidgets.QLabel("Source joint : ")
         self.LE_sourcejnt   = QtWidgets.QLineEdit()
+        self.LE_sourcejnt              .setEnabled(False)
         self.PB_sourcejnt   = QtWidgets.QPushButton(" Set ")
         
         self.L_targetjnt    = QtWidgets.QLabel("Target joint : ")
         self.LE_targetjnt   = QtWidgets.QLineEdit()
+        self.LE_targetjnt              .setEnabled(False)
         self.PB_targetjnt   = QtWidgets.QPushButton(" Set ")
         
         self.F_1 = QtWidgets.QFrame()
@@ -94,13 +97,14 @@ class controlweightvertex(QtWidgets.QDialog):
         
         self.F_3 = QtWidgets.QFrame()
         self.F_3.setFrameStyle      (   QtWidgets.QFrame.HLine  )
-        self.F_3.setMinimumHeight   (   10  )
+        self.F_3.setLineWidth       (   50  )
+        self.F_3.setFrameShadow     (QtWidgets.QFrame.Sunken)
         
         self.PB_mirror      = QtWidgets.QPushButton("Mirror skin weight")
         
         self.F_4 = QtWidgets.QFrame()
         self.F_4.setFrameStyle      (   QtWidgets.QFrame.HLine  )
-        self.F_4.setMinimumHeight   (   10  )
+        self.F_4.setLineWidth   (   10  )
         
         self.CB_switch          = QtWidgets.QComboBox()
         self.CB_switch.addItem    ("By replace")
