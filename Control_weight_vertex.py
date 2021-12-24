@@ -121,6 +121,10 @@ class controlweightvertex(QtWidgets.QDialog):
         
         self.PB_setselected= QtWidgets.QPushButton("Set selected")
         self.VL_selected   = QtWidgets.QVBoxLayout()
+        self.L_value   = QtWidgets.QLabel("Value : ")
+        self.DSB_value     = QtWidgets.QDoubleSpinBox()
+        self.DSB_value.                setMinimum(0)
+        self.DSB_value.                setMaximum(1)
         
         self.PB_zero        = QtWidgets.QPushButton("Zero weight") 
         
@@ -185,7 +189,9 @@ class controlweightvertex(QtWidgets.QDialog):
         HL_replacekw.addWidget(  self.L_replacekw     )
         HL_replacekw.addWidget(  self.LE_replacekw     )
         
-        
+        HL_value = QtWidgets.QHBoxLayout()
+        HL_value.addWidget     (self.L_value)
+        HL_value.addWidget     (self.DSB_value)
         
         MAIN_LAY = QtWidgets.QVBoxLayout(self)
         MAIN_LAY.addLayout(     HL_side             )
@@ -205,6 +211,7 @@ class controlweightvertex(QtWidgets.QDialog):
         MAIN_LAY.addLayout(     HL_replacekw        )
         MAIN_LAY.addWidget(     self.PB_setselected )
         MAIN_LAY.addLayout(     self.VL_selected    )
+        MAIN_LAY.addLayout(     HL_value            )
         MAIN_LAY.addWidget(     self.PB_zero        )
         MAIN_LAY.addWidget(     self.F_4            )
         MAIN_LAY.addWidget(     self.L_copyright    )
@@ -229,6 +236,9 @@ class controlweightvertex(QtWidgets.QDialog):
         
         text_combo = self.CB_switch.currentText()
         if text_combo == "By replace":
+            self.L_value.setHidden          (True                  )
+            self.DSB_value.setHidden        (True                  )
+            self.PB_zero.setText            ("Zero weight"         )
             self.LE_replacekw.setVisible    (True                  )
             self.L_replacekw.setVisible     (True                  )
             self.LE_searchkw.setVisible     (True                  )
@@ -236,6 +246,9 @@ class controlweightvertex(QtWidgets.QDialog):
             self.PB_setselected.setHidden   (True                  )
             self.Hidden_label               (self.VL_selected,True )
         else:
+            self.L_value.setVisible         (True                  )
+            self.DSB_value.setVisible       (True                  )
+            self.PB_zero.setText            ("Set Value weight"    )
             self.LE_replacekw.setHidden     (True                  )
             self.L_replacekw.setHidden      (True                  )
             self.LE_searchkw.setHidden      (True                  )
@@ -246,7 +259,7 @@ class controlweightvertex(QtWidgets.QDialog):
             
     def zeroweight              (self):
         
-        cmds.undoInfo(openChunk=True)
+        cmds.undoInfo(openChunk=True,chunkName="Set weight value")
         
         list_vtx    =    cmds.ls(sl=True,long=True)
         skin_cluster=   self.get_skin_cluster()
@@ -278,14 +291,14 @@ class controlweightvertex(QtWidgets.QDialog):
                             
                             
         elif self.CB_switch.currentText() == "By select":
-            
+            value = self.DSB_value.value()
             if self.selected:
                 for vtx in list_vtx:
-                    for influence in self.selected:
-                        try:
-                            cmds.skinPercent(skin_cluster,vtx,tv =   (influence,0))
-                        except:
-                            pass
+                    try:
+                        cmds.skinPercent(skin_cluster,vtx,tv =  [ (inf,value) for inf in self.selected])
+                        cmds.skinPercent(skin_cluster,vtx,normalize=True)
+                    except:
+                        pass
             else:
                 om.MGlobal.displayError("First select your joints . ")
             
@@ -296,7 +309,7 @@ class controlweightvertex(QtWidgets.QDialog):
         
     def mirror                  (self):        
         
-        cmds.undoInfo(openChunk=True)
+        cmds.undoInfo(openChunk=True,chunkName = "Mirror weight")
         
         skin_cluster = self.get_skin_cluster()
         
@@ -311,8 +324,9 @@ class controlweightvertex(QtWidgets.QDialog):
             if len(self.extrasource)>0:
                 if len(self.extrasource)==len(self.extratarget):
                     
-                    self.extrasource.append(self.source_joint)
-                    self.extratarget.append(self.target_joint)
+                    if not self.source_joint in self.extrasource:
+                        self.extrasource.append(self.source_joint)
+                        self.extratarget.append(self.target_joint)
 
                     for vtx in list_selected_vtx:
                         
@@ -320,11 +334,12 @@ class controlweightvertex(QtWidgets.QDialog):
                         
                         new_vtx = self.get_new_vtx(vtx,side)
                         if new_vtx:
-                            for index in range(len(source_values)):
-                                try:
-                                    cmds.skinPercent(skin_cluster,new_vtx,transformValue =(self.extratarget[index],source_values[index]))
-                                except:
-                                    pass
+                            
+                            try:
+                                cmds.skinPercent(skin_cluster,new_vtx,transformValue =[(x,y) for x,y in zip(self.extratarget,source_values)])
+                                cmds.skinPercent(skin_cluster,new_vtx,normalize=True)
+                            except:
+                                pass
                                     
                     del self.extrasource[-1]
                     del self.extratarget[-1]
@@ -482,4 +497,5 @@ class controlweightvertex(QtWidgets.QDialog):
         super(controlweightvertex,self).showEvent(e)
         e.accept()
         self.switchview()
+
 
